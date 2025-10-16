@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>视频播放 - iCoursera</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="video-container">
+    <video id="player" controls width="720"></video>
+
+    <div class="like-bar">
+      ❤️ <button id="like-btn">点赞</button>
+      (<span id="like-count">0</span>)
+    </div>
+
+    <div class="comment-section">
+      <h3>评论区</h3>
+      <div id="comments"></div>
+      <textarea id="content" placeholder="写下你的评论..."></textarea>
+      <button id="send">发表评论</button>
+    </div>
+  </div>
+  <script src="js/video.js"></script>
+</body>
+</html>
