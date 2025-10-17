@@ -1,7 +1,0 @@
-fastapi
-uvicorn[standard]
-SQLAlchemy>=2.0
-python-jose[cryptography]
-passlib[bcrypt]
-python-dotenv
-python-multipart
