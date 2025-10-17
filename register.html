@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>注册 - iCoursera</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body onload="redirectIfLoggedIn()" class="bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center min-h-screen font-sans">
+  <div class="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md border border-gray-200">
+    <h2 class="text-3xl font-bold text-center text-green-600 mb-6">注册 iCoursera</h2>
+
+    <div class="space-y-4">
+      <input id="name" type="text" placeholder="用户名"
+        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none">
+      <input id="email" type="email" placeholder="邮箱"
+        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none">
+      <input id="password" type="password" placeholder="密码（至少 6 位）"
+        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none">
+
+      <button onclick="handleRegister()" class="w-full bg-green-500 text-white font-semibold rounded-lg py-2 hover:bg-green-600 transition">
+        注册
+      </button>
+
+      <p id="message" class="text-center mt-2 text-sm"></p>
+
+      <p class="text-sm text-center text-gray-500 mt-4">
+        已有账号？
+        <a href="login.html" class="text-green-500 hover:underline">去登录</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>视频播放 - iCoursera</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-blue-50 font-sans min-h-screen flex flex-col">
+
+  <header class="bg-white shadow-md p-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-indigo-600">📺 视频学习</h1>
+    <button onclick="window.location.href='courses.html'" 
+      class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition">
+      ⬅ 返回课程
+    </button>
+  </header>
+
+  <main class="flex-grow flex flex-col items-center p-6">
+    <video id="courseVideo" controls class="w-full max-w-3xl rounded-lg shadow-lg mb-4"></video>
+
+    <div class="flex items-center gap-3 mb-6">
+      <button id="likeBtn" onclick="toggleLike()"
+        class="bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600 transition">
+        ❤️ 点赞
+      </button>
+      <span class="text-gray-700">已获 <span id="likeCount">0</span> 个赞</span>
+    </div>
+
+    <div class="w-full max-w-3xl bg-white p-6 rounded-xl shadow-md">
+      <h3 class="text-lg font-semibold mb-3 text-gray-800 border-b pb-2">💬 评论区</h3>
+      <ul id="commentsList" class="space-y-3 mb-4 max-h-[300px] overflow-y-auto"></ul>
+      <div class="flex gap-2">
+        <input id="commentInput" type="text" placeholder="写下你的评论..."
+          class="flex-grow border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+        <button onclick="postComment()"
+          class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition">
+          发表评论
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script>
+    checkLogin();
+    const params = new URLSearchParams(window.location.search);
+    const videoPath = params.get("video");
+    const token = localStorage.getItem("token");
+    const API_BASE = "http://127.0.0.1:8000/api";
+
+    if (videoPath) {
+      document.getElementById("courseVideo").src = "http://127.0.0.1:8000" + videoPath;
+    } else {
+      alert("未指定视频路径！");
+    }
+
+    const filename = videoPath ? videoPath.split("/").pop() : "";
+    const idMap = { "v1.mp4": 1, "v2.mp4": 2, "v3.mp4": 3 };
+    const courseId = idMap[filename] || 1;
+
+    async function loadComments() {
+      const res = await fetch(`${API_BASE}/courses/${courseId}/comments`);
+      const data = await res.json();
+      const list = document.getElementById("commentsList");
+      list.innerHTML = data.length ? "" : "<li class='text-gray-500 text-sm'>暂无评论</li>";
+      data.forEach(c => {
+        const li = document.createElement("li");
+        li.className = "border-b py-2";
+        li.innerHTML = `<p class='font-semibold'>${c.user}</p>
+                        <p class='text-gray-700'>${c.content}</p>
+                        <p class='text-gray-400 text-xs'>${new Date(c.created_at).toLocaleString()}</p>`;
+        list.appendChild(li);
+      });
+    }
+
+    async function postComment() {
+      const content = document.getElementById("commentInput").value.trim();
+      if (!content) return alert("请输入评论内容");
+      const res = await fetch(`${API_BASE}/courses/${courseId}/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({ content })
+      });
+      if (res.ok) {
+        document.getElementById("commentInput").value = "";
+        loadComments();
+      } else {
+        alert("评论失败");
+      }
+    }
+
+    async function toggleLike() {
+      const res = await fetch(`${API_BASE}/courses/${courseId}/like`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      const data = await res.json();
+      document.getElementById("likeBtn").innerText = data.liked ? "❤️ 已点赞" : "🤍 点赞";
+      loadLikeCount();
+    }
+
+    async function loadLikeCount() {
+      const res = await fetch(`${API_BASE}/courses/${courseId}/likes`);
+      const data = await res.json();
+      document.getElementById("likeCount").innerText = data.count ?? 0;
+    }
+
+    loadComments();
+    loadLikeCount();
+  </script>
+</body>
+</html>
